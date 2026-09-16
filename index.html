@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja" data-state="waiting">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ChenMe ｜ 次の販売まで、ここで待っててね。</title>
+<meta name="description" content="ChenMe（チェンミー）の次回販売お待ちページ。次回販売日時とカウントダウンを掲載しています。販売はAmazonの商品ページで行われます。">
+<meta name="theme-color" content="#FDF4F5">
+<meta name="format-detection" content="telephone=no">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="ChenMe ｜ 次の販売まで、ここで待っててね。">
+<meta property="og:description" content="次回販売日時とカウントダウン。販売はAmazonの商品ページで行われます。">
+<meta property="og:image" content="assets/img/product-hero.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="image" href="assets/img/product-hero.webp" imagesrcset="assets/img/product-hero.webp" fetchpriority="high">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+
+<!-- 背景の光 ---------------------------------------------------------- -->
+<div class="aura" aria-hidden="true">
+  <span class="aura__a"></span>
+  <span class="aura__b"></span>
+</div>
+
+<!-- 販売開始お知らせバー（スクロール位置に関係なく気づけるように） ------- -->
+<div class="livebar" id="livebar" hidden>
+  <span class="livebar__dot" aria-hidden="true"></span>
+  <span class="livebar__text">販売スタートしました</span>
+  <a class="livebar__link" id="livebarLink" href="#" data-amazon>Amazonへ</a>
+</div>
+
+<!-- ヘッダー ----------------------------------------------------------- -->
+<header class="header">
+  <img class="header__logo" src="assets/img/logo.png" alt="ChenMe" width="120" height="28" data-img>
+</header>
+
+<main>
+
+<!-- 1. ファーストビュー ------------------------------------------------ -->
+<section class="fv" id="fv">
+
+  <figure class="product">
+    <picture>
+      <source srcset="assets/img/product-hero.webp" type="image/webp">
+      <img src="assets/img/product-hero.jpg" alt="ChenMe 商品ボトル"
+           width="1000" height="1250" fetchpriority="high" decoding="async" data-img>
+    </picture>
+  </figure>
+
+  <!-- 待機中 / 販売直前 -->
+  <div class="fv__waiting" data-view="waiting">
+    <p class="eyebrow" id="eyebrow">NEXT DROP</p>
+    <h1 class="headline" id="headline">次の販売まで、<br>ここで待っててね。</h1>
+
+    <div class="sale-at">
+      <p class="sale-at__label">NEXT SALE</p>
+      <p class="sale-at__value" id="saleAt">—</p>
+    </div>
+
+    <div class="countdown" id="countdown" role="timer" aria-live="off">
+      <p class="countdown__lead">あと</p>
+      <div class="countdown__days" id="cdDays" hidden>
+        <span class="cd-num" id="cdDaysNum"></span><span class="cd-unit">DAYS</span>
+      </div>
+      <div class="countdown__clock" id="cdClock">
+        <span class="cd-cell" id="cdH"></span>
+        <span class="cd-sep">:</span>
+        <span class="cd-cell" id="cdM"></span>
+        <span class="cd-sep">:</span>
+        <span class="cd-cell cd-cell--sec" id="cdS"></span>
+      </div>
+      <p class="countdown__sr" id="cdSr" aria-live="polite" role="status"></p>
+    </div>
+
+    <p class="fv__note">
+      このページから購入・予約・お取り置きはできません。<br>
+      販売はAmazonの商品ページで行われます。
+    </p>
+  </div>
+
+  <!-- 販売開始 -->
+  <div class="fv__onsale" data-view="onsale" hidden>
+    <p class="eyebrow eyebrow--live"><span class="live-dot" aria-hidden="true"></span>NOW ON SALE</p>
+    <h1 class="headline headline--live" id="onSaleTitle">販売スタートしました</h1>
+    <p class="fv__lead" id="onSaleLead">販売が始まったら、ここからすぐに。</p>
+
+    <a class="btn btn--amazon" id="heroAmazon" href="#" data-amazon>
+      <span class="btn__label">Amazonで購入する</span>
+      <span class="btn__sub">Amazonの商品ページへ移動します</span>
+    </a>
+
+    <p class="fv__note">販売状況によっては、早期に販売終了となる場合があります。</p>
+  </div>
+
+  <!-- SOLD OUT -->
+  <div class="fv__soldout" data-view="soldout" hidden>
+    <p class="eyebrow">SOLD OUT</p>
+    <h1 class="headline" id="soldOutTitle">今回の販売は終了しました。</h1>
+    <p class="fv__lead" id="soldOutLead">次の販売まで、またここで待っててね。</p>
+    <a class="btn btn--ghost" href="#notify" data-scroll>次回販売のお知らせを受け取る</a>
+  </div>
+
+</section>
+
+<!-- 2. 販売開始通知 ---------------------------------------------------- -->
+<section class="notify" id="notify" data-section="notify">
+  <div class="card">
+    <h2 class="card__title" id="notifyTitle">販売スタートをお知らせ</h2>
+    <p class="card__lead">販売が始まったら、すぐ見に行けるように。</p>
+    <div id="notifySlot" class="notify__slot"><!-- config.notify に応じて描画 --></div>
+    <p class="card__note" id="notifyNote"></p>
+  </div>
+</section>
+
+<!-- 3. ブランド／商品紹介 ----------------------------------------------- -->
+<section class="brand" data-section="brand">
+
+  <figure class="brand__full">
+    <picture>
+      <source srcset="assets/img/brand-01.webp" type="image/webp">
+      <img src="assets/img/brand-01.jpg" alt="ChenMe のイメージ"
+           width="1000" height="1250" loading="lazy" decoding="async" data-img>
+    </picture>
+  </figure>
+
+  <p class="brand__copy" id="brandCopy">今日より明日。<br>もっとスッキリ。</p>
+
+  <div class="brand__duo">
+    <figure>
+      <picture>
+        <source srcset="assets/img/brand-02.webp" type="image/webp">
+        <img src="assets/img/brand-02.jpg" alt="ChenMe のイメージ"
+             width="640" height="800" loading="lazy" decoding="async" data-img>
+      </picture>
+    </figure>
+    <figure>
+      <picture>
+        <source srcset="assets/img/brand-03.webp" type="image/webp">
+        <img src="assets/img/brand-03.jpg" alt="ChenMe のイメージ"
+             width="640" height="800" loading="lazy" decoding="async" data-img>
+      </picture>
+    </figure>
+  </div>
+
+  <p class="brand__sub">夜、ベッドに入る前のひととき。<br>自分のための、小さな習慣を。</p>
+</section>
+
+<!-- 4. 販売について ---------------------------------------------------- -->
+<section class="about" data-section="about">
+  <h2 class="about__title">販売について</h2>
+  <ul class="about__list">
+    <li>ChenMeはAmazonで販売します。</li>
+    <li>販売開始後、商品ページからご購入いただけます。</li>
+    <li>販売状況によっては、早期に販売終了となる場合があります。</li>
+  </ul>
+
+  <!-- 過去実績（config.salesRecords が空なら非表示） -->
+  <div class="records" id="records" hidden>
+    <p class="records__title">これまでの販売</p>
+    <ul class="records__list" id="recordsList"></ul>
+  </div>
+</section>
+
+<footer class="footer">
+  <img class="footer__logo" src="assets/img/logo.png" alt="ChenMe" width="96" height="22" loading="lazy" data-img>
+  <p class="footer__note">このページは次回販売のご案内ページです。<br>在庫数・購入順の確保はできません。</p>
+  <p class="footer__copy">© ChenMe</p>
+</footer>
+
+</main>
+
+<!-- 販売中のみ表示する固定CTA ------------------------------------------ -->
+<div class="sticky" id="sticky" hidden>
+  <a class="btn btn--amazon btn--sticky" id="stickyAmazon" href="#" data-amazon>
+    <span class="btn__label">Amazonで購入する</span>
+  </a>
+</div>
+
+<noscript>
+  <div class="noscript">
+    次回販売日時はこのページに掲載しています。JavaScriptを有効にするとカウントダウンが表示されます。
+    販売はAmazonの商品ページで行われます。
+  </div>
+</noscript>
+
+<script src="config.js"></script>
+<script src="assets/js/analytics.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

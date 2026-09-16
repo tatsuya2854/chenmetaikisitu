@@ -1,0 +1,14 @@
+{
+  "name": "chenme-waiting-page",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ChenMe 次回販売待機ページ（静的サイト・ビルド不要）",
+  "type": "module",
+  "scripts": {
+    "dev": "npx --yes serve . -l 4173",
+    "images": "node tools/optimize-images.mjs"
+  },
+  "devDependencies": {
+    "sharp": "^0.33.5"
+  }
+}
