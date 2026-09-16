@@ -40,7 +40,7 @@
 
 <!-- ヘッダー ----------------------------------------------------------- -->
 <header class="header">
-  <img class="header__logo" src="assets/img/logo.png" alt="ChenMe" width="120" height="28" data-img>
+  <img class="header__logo" src="assets/img/logo.png" alt="ChenMe" width="832" height="212" data-img>
 </header>
 
 <main>
@@ -51,8 +51,8 @@
   <figure class="product">
     <picture>
       <source srcset="assets/img/product-hero.webp" type="image/webp">
-      <img src="assets/img/product-hero.jpg" alt="ChenMe 商品ボトル"
-           width="1000" height="1250" fetchpriority="high" decoding="async" data-img>
+      <img src="assets/img/product-hero.jpg" alt="ChenMe ほぐほぐクリーム"
+           width="1080" height="1350" fetchpriority="high" decoding="async" data-img>
     </picture>
   </figure>
 
@@ -98,7 +98,7 @@
       <span class="btn__sub">Amazonの商品ページへ移動します</span>
     </a>
 
-    <p class="fv__note">販売状況によっては、早期に販売終了となる場合があります。</p>
+    <p class="fv__note">販売状況によっては、<br>早期に販売終了となる場合があります。</p>
   </div>
 
   <!-- SOLD OUT -->
@@ -115,43 +115,36 @@
 <section class="notify" id="notify" data-section="notify">
   <div class="card">
     <h2 class="card__title" id="notifyTitle">販売スタートをお知らせ</h2>
-    <p class="card__lead">販売が始まったら、すぐ見に行けるように。</p>
+    <p class="card__lead" id="notifyLead">販売が始まったら、すぐ見に行けるように。</p>
     <div id="notifySlot" class="notify__slot"><!-- config.notify に応じて描画 --></div>
     <p class="card__note" id="notifyNote"></p>
   </div>
 </section>
 
-<!-- 3. ブランド／商品紹介 ----------------------------------------------- -->
+<!-- 3. ブランド／商品紹介 -----------------------------------------------
+     ※「今日より明日。もっとスッキリ。」は brand-01 の画像内に入っているため、
+       テキストでは重複させていません。 -->
 <section class="brand" data-section="brand">
 
-  <figure class="brand__full">
+  <figure class="brand__square">
     <picture>
       <source srcset="assets/img/brand-01.webp" type="image/webp">
-      <img src="assets/img/brand-01.jpg" alt="ChenMe のイメージ"
-           width="1000" height="1250" loading="lazy" decoding="async" data-img>
+      <img src="assets/img/brand-01.jpg" alt="ChenMe ほぐほぐクリーム ― 今日より明日。もっとスッキリ。"
+           width="1280" height="1280" loading="lazy" decoding="async" data-img>
     </picture>
   </figure>
 
-  <p class="brand__copy" id="brandCopy">今日より明日。<br>もっとスッキリ。</p>
+  <p class="brand__copy" id="brandCopy">夜、ベッドに入る前のひととき。<br>自分のための、小さな習慣を。</p>
 
-  <div class="brand__duo">
-    <figure>
-      <picture>
-        <source srcset="assets/img/brand-02.webp" type="image/webp">
-        <img src="assets/img/brand-02.jpg" alt="ChenMe のイメージ"
-             width="640" height="800" loading="lazy" decoding="async" data-img>
-      </picture>
-    </figure>
-    <figure>
-      <picture>
-        <source srcset="assets/img/brand-03.webp" type="image/webp">
-        <img src="assets/img/brand-03.jpg" alt="ChenMe のイメージ"
-             width="640" height="800" loading="lazy" decoding="async" data-img>
-      </picture>
-    </figure>
-  </div>
+  <figure class="brand__full">
+    <picture>
+      <source srcset="assets/img/brand-02.webp" type="image/webp">
+      <img src="assets/img/brand-02.jpg" alt="ChenMe ほぐほぐクリームのボトル"
+           width="1080" height="1440" loading="lazy" decoding="async" data-img>
+    </picture>
+  </figure>
 
-  <p class="brand__sub">夜、ベッドに入る前のひととき。<br>自分のための、小さな習慣を。</p>
+  <p class="brand__name" id="brandName">ほぐほぐクリーム</p>
 </section>
 
 <!-- 4. 販売について ---------------------------------------------------- -->
@@ -171,7 +164,7 @@
 </section>
 
 <footer class="footer">
-  <img class="footer__logo" src="assets/img/logo.png" alt="ChenMe" width="96" height="22" loading="lazy" data-img>
+  <img class="footer__logo" src="assets/img/logo.png" alt="ChenMe" width="832" height="212" loading="lazy" data-img>
   <p class="footer__note">このページは次回販売のご案内ページです。<br>在庫数・購入順の確保はできません。</p>
   <p class="footer__copy">© ChenMe</p>
 </footer>

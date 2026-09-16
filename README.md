@@ -32,21 +32,20 @@ saleStatus: 'auto',                          // auto / waiting / on_sale / sold_
 
 ---
 
-## 2. 画像の置き方
-
-`assets/img/` に5枚を、決まったファイル名で置くだけです（詳細は `assets/img/README.md`）。
+## 2. 画像（配置済み）
 
 ```
-assets/img/logo.png           ロゴ
-assets/img/product-hero.jpg   ファーストビューの商品ボトル
-assets/img/brand-01.jpg       ブランドセクション（大）
-assets/img/brand-02.jpg       ブランドセクション（小・左）
-assets/img/brand-03.jpg       ブランドセクション（小・右）
+assets/img/logo.png           ChenMe ワードマーク（背景透過）
+assets/img/product-hero.jpg   ファーストビュー：寝室カット
+assets/img/brand-01.jpg       ブランド：モデルカット
+assets/img/brand-02.jpg       ブランド：ボトル単体
+assets/img/_source/           加工前の原本（ページからは未参照）
 ```
 
-- 商品ボトルは **実物の撮影画像をそのまま** 使用します。ラベル・ロゴ・形状の描き直しはしません。
-- 置いたあと `npm install && npm run images` を実行すると、軽量な `.webp` が自動生成されます（スマホの読み込みが速くなるので公開前に一度実行推奨）。
-- 画像が未設置でもページは崩れません。やわらかいピンクの面が代わりに表示されます。
+- 商品ボトルは **実物の撮影画像をそのまま** 使用しています。ラベル・ロゴ・イラスト・形状は一切加工していません。
+- ロゴのみ、ヘッダーで使うため **背景の淡いピンクを透過** にしています（文字色 `rgb(106,102,99)` は実測値のまま、字形は無変更）。
+- 差し替えは同じファイル名で上書き → `npm run images` で `.webp` 再生成。
+- 加工内容の詳細は `assets/img/README.md` を参照してください。
 
 ---
 

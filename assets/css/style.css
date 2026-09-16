@@ -68,10 +68,12 @@ section {
   padding-inline: var(--gut);
 }
 
-/* 画像が未設置のときに壊れて見えないようにする */
-img[data-img] { background: linear-gradient(160deg, #FBEFF1, #F4E2E5); border-radius: 6px; }
+/* 画像の読み込み中／未設置でも崩れて見えないようにする。
+   背景は figure 側に置く（透過PNGのロゴに下地が透けないようにするため） */
+.product, .brand__square, .brand__full {
+  background: linear-gradient(160deg, #FBEFF1 0%, #F7E7EA 60%, #F2DCE0 100%);
+}
 img.is-missing { opacity: 0; }
-figure.is-missing { background: linear-gradient(160deg, #FBEFF1 0%, #F7E7EA 60%, #F2DCE0 100%); }
 
 /* ---- 3. 背景の光 --------------------------------------------------- */
 .aura { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
@@ -91,7 +93,7 @@ figure.is-missing { background: linear-gradient(160deg, #FBEFF1 0%, #F7E7EA 60%,
   display: flex; justify-content: center; align-items: center;
   padding: 22px var(--gut) 6px;
 }
-.header__logo { width: auto; height: 26px; object-fit: contain; background: none; }
+.header__logo { width: auto; height: 24px; object-fit: contain; background: none; }
 
 /* ---- 5. FV --------------------------------------------------------- */
 .fv {
@@ -99,7 +101,7 @@ figure.is-missing { background: linear-gradient(160deg, #FBEFF1 0%, #F7E7EA 60%,
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding-top: 8px;
+  padding-top: 18px;
   padding-bottom: 56px;
 }
 
@@ -116,12 +118,13 @@ figure.is-missing { background: linear-gradient(160deg, #FBEFF1 0%, #F7E7EA 60%,
   background: radial-gradient(ellipse at 50% 0%, rgba(255, 210, 219, .55), rgba(255, 210, 219, 0) 70%);
   pointer-events: none;
 }
-.product picture, .product img { width: 100%; height: 100%; }
-.product img { object-fit: contain; animation: float 7s var(--ease) infinite; }
+.product picture, .product img { width: 100%; height: 100%; display: block; }
+/* 寝室カットは写真なので cover。わずかに拡大してから浮遊させ、縁に隙間が出ないようにする */
+.product img { object-fit: cover; animation: float 7s var(--ease) infinite; }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-6px); }
+  0%, 100% { transform: scale(1.04) translateY(0); }
+  50%      { transform: scale(1.04) translateY(-6px); }
 }
 
 .eyebrow {
@@ -305,23 +308,26 @@ figure.is-missing { background: linear-gradient(160deg, #FBEFF1 0%, #F7E7EA 60%,
 
 /* ---- 10. ブランド --------------------------------------------------- */
 .brand { padding-block: 44px 20px; }
-.brand__full { margin: 0; border-radius: var(--r); overflow: hidden; aspect-ratio: 4 / 5; }
+.brand__square,
+.brand__full { margin: 0; border-radius: var(--r); overflow: hidden; }
+.brand__square { aspect-ratio: 1 / 1; }
+.brand__full   { aspect-ratio: 3 / 4; }
+.brand__square img,
 .brand__full img { width: 100%; height: 100%; object-fit: cover; }
 
 .brand__copy {
   text-align: center;
-  font-size: clamp(20px, 5.6vw, 24px);
-  font-weight: 300; line-height: 2; letter-spacing: .1em;
-  padding-block: 44px 40px;
+  font-size: clamp(15px, 4.2vw, 17px);
+  font-weight: 300; line-height: 2.2; letter-spacing: .1em;
+  color: var(--c-ink-60);
+  padding-block: 38px 36px;
 }
 
-.brand__duo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.brand__duo figure { margin: 0; border-radius: 14px; overflow: hidden; aspect-ratio: 4 / 5; }
-.brand__duo img { width: 100%; height: 100%; object-fit: cover; }
-
-.brand__sub {
-  text-align: center; font-size: 13px; line-height: 2.1;
-  color: var(--c-ink-60); padding-block: 34px 0;
+.brand__name {
+  text-align: center;
+  font-size: 13px; letter-spacing: .2em; text-indent: .2em;
+  color: var(--c-ink-40);
+  padding-block: 18px 0;
 }
 
 /* ---- 11. 販売について ----------------------------------------------- */

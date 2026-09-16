@@ -64,7 +64,7 @@ window.CHENME_CONFIG = {
     url: '',                 // mode:'url' のとき使用（例: 'https://lin.ee/xxxxxxx'）
     buttonLabel: '',         // 空ならモードに応じた既定ラベル
     endpoint: '',            // mode:'email' のとき使用（POST先 URL）
-    note: 'お知らせの受け取りは、優先購入・商品の確保・予約ではありません。'
+    note: '優先購入・商品の確保・予約ではありません。'
   },
 
 
@@ -102,7 +102,18 @@ window.CHENME_CONFIG = {
     soldOutTitle:     '今回の販売は終了しました。',
     soldOutLead:      '次の販売まで、またここで待っててね。',
 
-    brandCopy:        '今日より明日。\nもっとスッキリ。',
+    /* お知らせセクションの見出し（販売終了時は下の2つに切り替わります） */
+    notifyTitle:        '販売スタートをお知らせ',
+    notifyLead:         '販売が始まったら、すぐ見に行けるように。',
+    soldOutNotifyTitle: '次回販売のお知らせを受け取る',
+    soldOutNotifyLead:  '次の販売が決まったら、お知らせします。',
+
+    /* ブランドセクション。
+       「今日より明日。もっとスッキリ。」は brand-01.jpg の画像内に入っているため、
+       ここでは重ねず、静かなトーンの文章にしています。 */
+    brandCopy:        '夜、ベッドに入る前のひととき。\n自分のための、小さな習慣を。',
+    brandName:        'ほぐほぐクリーム',
+
     ctaAmazon:        'Amazonで購入する'
   },
 

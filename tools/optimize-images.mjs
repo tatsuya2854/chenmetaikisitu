@@ -16,17 +16,21 @@ const DIR = path.resolve('assets/img');
 /** ファイル名ごとの最大幅（スマホ表示に十分なサイズ） */
 const MAX_WIDTH = {
   'logo.png': 720,
-  'product-hero.jpg': 1200,
-  'brand-01.jpg': 1200,
-  'brand-02.jpg': 900,
-  'brand-03.jpg': 900
+  'product-hero.jpg': 1080,
+  'brand-01.jpg': 1080,
+  'brand-02.jpg': 1080
 };
-const DEFAULT_MAX_WIDTH = 1200;
+const DEFAULT_MAX_WIDTH = 1080;
 
 const SOURCE_EXT = new Set(['.jpg', '.jpeg', '.png']);
 
+/** logo.png は透過PNGのまま使うため変換しない（_source/ の原本も対象外） */
+const SKIP = new Set(['logo.png']);
+
 const files = await readdir(DIR).catch(() => []);
-const targets = files.filter((f) => SOURCE_EXT.has(path.extname(f).toLowerCase()));
+const targets = files
+  .filter((f) => SOURCE_EXT.has(path.extname(f).toLowerCase()))
+  .filter((f) => !SKIP.has(f));
 
 if (targets.length === 0) {
   console.log('assets/img/ に画像がありません。5枚を置いてから実行してください。');

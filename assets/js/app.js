@@ -37,7 +37,8 @@
     recordsList: $('recordsList'),
     notifySlot: $('notifySlot'),
     notifyNote: $('notifyNote'),
-    notifyTitle: $('notifyTitle')
+    notifyTitle: $('notifyTitle'),
+    notifyLead: $('notifyLead')
   };
 
   /* ---------------------------------------------------------------
@@ -80,6 +81,7 @@
     if (COPY.soldOutTitle) $('soldOutTitle').innerHTML = nl2br(COPY.soldOutTitle);
     if (COPY.soldOutLead)  $('soldOutLead').innerHTML = nl2br(COPY.soldOutLead);
     if (COPY.brandCopy)    $('brandCopy').innerHTML = nl2br(COPY.brandCopy);
+    if (COPY.brandName)    $('brandName').textContent = COPY.brandName;
     el.saleAt.textContent = formatSaleAt(saleDate);
 
     if (COPY.ctaAmazon) {
@@ -194,9 +196,13 @@
       el.headline.innerHTML = nl2br(COPY.headline || '次の販売まで、\nここで待っててね。');
     }
 
-    /* SOLD OUT のときは通知セクションの見出しを差し替え */
-    if (next === 'soldout' && el.notifyTitle) {
-      el.notifyTitle.textContent = '次回販売のお知らせを受け取る';
+    /* SOLD OUT のときは通知セクションの文言を「次回に向けて」に差し替え */
+    if (next === 'soldout') {
+      el.notifyTitle.textContent = COPY.soldOutNotifyTitle || '次回販売のお知らせを受け取る';
+      el.notifyLead.textContent  = COPY.soldOutNotifyLead  || '次の販売が決まったら、お知らせします。';
+    } else {
+      el.notifyTitle.textContent = COPY.notifyTitle || '販売スタートをお知らせ';
+      el.notifyLead.textContent  = COPY.notifyLead  || '販売が始まったら、すぐ見に行けるように。';
     }
 
     /* --- 計測 --- */
@@ -251,7 +257,7 @@
       a.href = n.url;
       a.target = '_blank';
       a.rel = 'noopener';
-      a.textContent = n.buttonLabel || '販売スタートのお知らせを受け取る';
+      a.textContent = n.buttonLabel || 'お知らせを受け取る';
       a.addEventListener('click', function () { track('notification_click', { method: 'url' }); });
       el.notifySlot.appendChild(a);
       return;
@@ -265,7 +271,7 @@
         '<input class="notify__input" type="email" name="email" inputmode="email" ' +
         'autocomplete="email" placeholder="メールアドレス" required>' +
         '<button class="btn btn--ghost" type="submit">' +
-        (n.buttonLabel || '販売スタートのお知らせを受け取る') + '</button>' +
+        (n.buttonLabel || 'お知らせを受け取る') + '</button>' +
         '<p class="notify__msg" role="status"></p>';
 
       var msg = form.querySelector('.notify__msg');
