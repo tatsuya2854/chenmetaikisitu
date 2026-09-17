@@ -26,11 +26,16 @@
   var cfg = (w.CHENME_CONFIG && w.CHENME_CONFIG.analytics) || {};
   var id = (cfg.ga4MeasurementId || '').trim();
 
+  /* --- プレビュー表示中は計測しない ---
+     ?preview=... で開いた確認用の閲覧が、実際のファネルの数字を
+     汚さないようにする。GA4 タグ自体も読み込まない。 */
+  var isPreview = /[?&]preview=/.test(w.location.search);
+
   /* dataLayer は常に用意する（GTM を後入れする場合もここに溜まる） */
   w.dataLayer = w.dataLayer || [];
 
   /* --- GA4 を動的に読み込む（測定IDが入っているときだけ） --- */
-  if (id) {
+  if (id && !isPreview) {
     var s = document.createElement('script');
     s.async = true;
     s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
@@ -62,6 +67,13 @@
    */
   function track(name, params, opt) {
     opt = opt || {};
+
+    /* プレビュー中は送信せず、コンソールに出すだけにする */
+    if (isPreview) {
+      if (cfg.debug) console.log('[chenme:preview] 計測は送信しません:', name, params || {});
+      return;
+    }
+
     if (opt.once) {
       if (fired[name]) return;
       fired[name] = true;
@@ -78,5 +90,7 @@
     if (cfg.debug) console.log('[chenme:track]', name, payload);
   }
 
-  w.ChenMeAnalytics = { track: track, viewId: viewId, openedAt: openedAt };
+  w.ChenMeAnalytics = {
+    track: track, viewId: viewId, openedAt: openedAt, isPreview: isPreview
+  };
 })(window);

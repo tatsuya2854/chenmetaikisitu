@@ -54,6 +54,82 @@
 
   var saleDate = parseJst(CFG.nextSaleAt);
 
+  /* ---------------------------------------------------------------
+     1-b. プレビュー（?preview=... のときだけ動く確認用モード）
+     ---------------------------------------------------------------
+     関係者に実機で全部の状態を見てもらうための仕組みです。
+     URL に ?preview= を付けたときだけ有効で、通常の閲覧には一切影響しません。
+     プレビュー中は計測を送らず、画面上部に必ずプレビュー表示だと分かる
+     バーを出します（本物の販売状況と誤解されないようにするため）。
+
+       ?preview=waiting    待機中
+       ?preview=imminent   販売10分前
+       ?preview=final      販売1分前（そのまま見ていると販売開始に切り替わります）
+       ?preview=onsale     販売中
+       ?preview=soldout    販売終了
+       ?preview=live&sec=90  90秒後に販売開始（切り替わる瞬間を見せたいとき）
+     --------------------------------------------------------------- */
+  var PREVIEW_OFFSET_MS = {
+    waiting:  3 * 86400000,
+    imminent: 5 * 60000,
+    final:    40000
+  };
+  var PREVIEW_LABEL = {
+    waiting: '待機中', imminent: '10分前', final: '1分前',
+    onsale: '販売中', soldout: '販売終了', live: 'カウント中'
+  };
+  var PREVIEW = null;
+
+  function setupPreview() {
+    var q = new URLSearchParams(w.location.search);
+    var p = q.get('preview');
+    if (!p) return;
+
+    PREVIEW = p;
+    root.setAttribute('data-preview', '');
+
+    var sec = parseInt(q.get('sec'), 10);
+    if (p === 'live' && sec > 0) {
+      saleDate = new Date(Date.now() + sec * 1000);
+      CFG.saleStatus = 'auto';
+    } else if (p === 'onsale') {
+      CFG.saleStatus = 'on_sale';
+    } else if (p === 'soldout') {
+      CFG.saleStatus = 'sold_out';
+    } else if (PREVIEW_OFFSET_MS[p] != null) {
+      saleDate = new Date(Date.now() + PREVIEW_OFFSET_MS[p]);
+      CFG.saleStatus = 'auto';
+    }
+  }
+
+  /* プレビューバー（これがあるので本物の販売状況と取り違えられない） */
+  function buildPreviewBar() {
+    if (!PREVIEW) return;
+
+    var bar = d.createElement('div');
+    bar.className = 'preview-bar';
+
+    var head = d.createElement('div');
+    head.className = 'preview-bar__head';
+    head.innerHTML =
+      '<span class="preview-bar__tag">PREVIEW</span>' +
+      '<span class="preview-bar__note">確認用の表示です。実際の販売状況ではありません。</span>';
+    bar.appendChild(head);
+
+    var nav = d.createElement('nav');
+    nav.className = 'preview-bar__nav';
+    ['waiting', 'imminent', 'final', 'onsale', 'soldout'].forEach(function (key) {
+      var a = d.createElement('a');
+      a.className = 'preview-bar__btn' + (key === PREVIEW ? ' is-current' : '');
+      a.href = '?preview=' + key;
+      a.textContent = PREVIEW_LABEL[key];
+      nav.appendChild(a);
+    });
+    bar.appendChild(nav);
+
+    d.body.appendChild(bar);
+  }
+
   function formatSaleAt(date) {
     if (!date) return '—';
     /* 表示も日本時間で固定 */
@@ -393,11 +469,14 @@
   /* ---------------------------------------------------------------
      起動
      --------------------------------------------------------------- */
+  setupPreview();          /* ?preview= があるときだけ、日時と状態を差し替える */
+
   applyCopy();
   wireAmazon();
   buildNotify();
   buildRecords();
   guardImages();
+  buildPreviewBar();
 
   var initialState = resolveState(Date.now());
   root.setAttribute('data-state', initialState);          /* 計測の page_state を正しくするため先に反映 */

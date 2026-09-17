@@ -405,6 +405,45 @@ img.is-missing { opacity: 0; }
 
 .noscript { padding: 20px var(--gut); font-size: 13px; text-align: center; color: var(--c-ink-60); }
 
+/* ---- 13-b. プレビューバー（?preview= のときだけ出る確認用UI） --------
+   本物の販売状況と取り違えられないよう、常に最前面に表示する。 */
+:root { --preview-h: 0px; }
+[data-preview] { --preview-h: 84px; }
+
+.preview-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 90;
+  padding: 7px 12px calc(7px + env(safe-area-inset-top, 0px));
+  padding-top: calc(7px + env(safe-area-inset-top, 0px));
+  background: #2F2728;
+  color: #fff;
+  text-align: center;
+  font-size: 11px; letter-spacing: .02em; line-height: 1.5;
+}
+.preview-bar__head { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.preview-bar__tag {
+  padding: 2px 8px; border-radius: 4px;
+  background: #EFC9CE; color: #2F2728;
+  font-size: 9.5px; font-weight: 500; letter-spacing: .14em;
+}
+.preview-bar__note { opacity: .8; }
+.preview-bar__nav { display: flex; gap: 5px; justify-content: center; margin-top: 6px; }
+.preview-bar__btn {
+  flex: 1 1 0; min-width: 0; max-width: 84px;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 44px;                       /* スマホで押しやすい大きさ */
+  padding: 4px; border-radius: 8px;
+  background: rgba(255, 255, 255, .12);
+  font-size: 11.5px; color: #fff;
+  transition: background .2s var(--ease);
+}
+.preview-bar__btn.is-current { background: #EFC9CE; color: #2F2728; font-weight: 500; }
+.preview-bar__btn:active { background: rgba(255, 255, 255, .3); }
+
+/* プレビューバーのぶん、固定要素と本文を下にずらす */
+[data-preview] .livebar { top: var(--preview-h); }
+[data-preview] .header  { padding-top: calc(22px + var(--preview-h)); }
+[data-preview][data-state="onsale"] .header { padding-top: calc(62px + var(--preview-h)); }
+
 /* ---- 14. デスクトップ（スマホ幅を中央に置く） ------------------------ */
 @media (min-width: 720px) {
   :root { --w: 520px; --gut: 28px; }
