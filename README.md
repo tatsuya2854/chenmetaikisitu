@@ -155,17 +155,51 @@ npm install          # 画像変換ツール（sharp）を入れる。初回だ�
 npm run images       # assets/img/ の画像から .webp を生成
 ```
 
-### Cloudflare Pages
+### Cloudflare Pages へのデプロイ
 
-ビルド不要です。
+ビルド不要です。`wrangler.toml` を置いてあるので設定は自動で読まれます。
+
+**A. ダッシュボードから（おすすめ・初回はこちら）**
+
+1. https://dash.cloudflare.com → Workers & Pages → Create → Pages → Connect to Git
+2. リポジトリ `tatsuya2854/chenmetaikisitu` を選択
+3. 設定はそのままで OK（下の表の値が自動で入ります）
+4. Save and Deploy → 1〜2分で `https://<プロジェクト名>.pages.dev` が発行されます
 
 | 項目 | 値 |
 |---|---|
+| Production branch | `claude/chenme-waiting-page-vcfcpa`（このリポジトリの既定ブランチ） |
+| Framework preset | None |
 | ビルドコマンド | （空欄） |
 | 出力ディレクトリ | `/`（リポジトリのルート） |
 
-`_headers` にキャッシュ設定を入れてあります。
-**`index.html` と `config.js` はキャッシュしない設定**なので、販売日時や状態の変更が即座に反映されます。
+**B. 手元のPCから1コマンドで**
+
+```bash
+npx wrangler login      # 初回だけ、ブラウザで認証
+npx wrangler pages deploy
+```
+
+### ★デプロイ後に1回だけやること
+
+`index.html` の先頭にある「▼▼ デプロイ後に1回だけ書き換えてください ▼▼」の
+**2行だけ**、発行された実際のURLに書き換えてください。
+
+```html
+<meta property="og:url"   content="https://chenme.pages.dev/">
+<meta property="og:image" content="https://chenme.pages.dev/assets/img/og.jpg">
+```
+
+OGP（LINE や X でシェアしたときのサムネイル）は絶対URLでないと画像が出ないため、
+ここだけは実際の公開URLが必要です。以降この2行を触ることはありません。
+
+反映の確認は https://developers.facebook.com/tools/debug/ に URL を貼るのが早いです。
+
+### キャッシュについて
+
+`_headers` に設定済みです。**`index.html` と `config.js` はキャッシュしない**ので、
+販売日時や `saleStatus` の変更は保存＆デプロイ後すぐ反映されます。
+画像・CSS・JS は長めにキャッシュされます。
 
 ---
 

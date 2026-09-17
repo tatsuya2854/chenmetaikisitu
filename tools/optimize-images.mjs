@@ -24,8 +24,10 @@ const DEFAULT_MAX_WIDTH = 1080;
 
 const SOURCE_EXT = new Set(['.jpg', '.jpeg', '.png']);
 
-/** logo.png は透過PNGのまま使うため変換しない（_source/ の原本も対象外） */
-const SKIP = new Set(['logo.png']);
+/** 変換しないファイル（_source/ の原本も対象外）
+ *  logo.png … 透過PNGのまま使うため
+ *  og.jpg   … SNSのOGP用。WebP非対応のクローラーがあるため JPEG のまま */
+const SKIP = new Set(['logo.png', 'og.jpg']);
 
 const files = await readdir(DIR).catch(() => []);
 const targets = files

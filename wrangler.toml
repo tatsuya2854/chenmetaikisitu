@@ -1,0 +1,10 @@
+# Cloudflare Pages の設定（ビルドは不要なので、公開するフォルダを指定するだけ）
+#
+# ダッシュボードで GitHub と連携する場合は、この設定が自動で読まれます。
+# 手元から直接デプロイしたい場合は、プロジェクト直下でこの1行:
+#
+#     npx wrangler pages deploy
+#
+name = "chenme"
+pages_build_output_dir = "."
+compatibility_date = "2026-09-17"
