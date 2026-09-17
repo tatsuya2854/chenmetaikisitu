@@ -94,8 +94,28 @@
   /* ---------------------------------------------------------------
      3. Amazon リンク（設定ファイルから注入・直書きしない）
      --------------------------------------------------------------- */
+  /* 商品ページではなく Amazon のトップに飛ばしてしまう事故を検知する。
+     待たせた人を全員トップページに流すのが最悪の失敗なので、
+     設定ミスに気づけるよう警告を出す（表示や遷移そのものは妨げない）。 */
+  function checkAmazonUrl(url) {
+    if (!url) return '未設定です。config.js の amazonUrl に商品ページのURLを入れてください。';
+    var m = /^https?:\/\/([^/?#]+)([^?#]*)/i.exec(url);
+    if (!m) return 'URLの形式が正しくない可能性があります: ' + url;
+    var host = m[1].toLowerCase(), pathname = m[2] || '/';
+    /* 短縮URLは遷移先が分からないので形式チェックの対象外 */
+    if (/^(amzn\.to|amzn\.asia|a\.co)$/.test(host)) return null;
+    if (/(^|\.)amazon\./.test(host) && !/\/(dp|gp)\//.test(pathname)) {
+      return 'Amazonのトップページを指している可能性があります（/dp/ が含まれていません）: ' + url;
+    }
+    return null;
+  }
+
   function wireAmazon() {
     var url = (CFG.amazonUrl || '').trim();
+
+    var problem = checkAmazonUrl(url);
+    if (problem) console.warn('[ChenMe] Amazon URL の確認: ' + problem);
+
     Array.prototype.forEach.call(d.querySelectorAll('[data-amazon]'), function (a) {
       a.setAttribute('href', url || '#');
       a.setAttribute('rel', 'noopener');
