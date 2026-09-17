@@ -16,6 +16,7 @@
   --c-ink-40:    rgba(47, 39, 40, .40);
   --c-rose:      #9B6570;
   --c-rose-deep: #7E4E59;
+  --c-rose-ink:  #6B404A;   /* 淡いピンクの上でも AA を満たす文字色 */
   --c-line:      rgba(155, 101, 112, .16);
   --c-glow:      rgba(255, 214, 221, .85);
 
@@ -277,6 +278,15 @@ img.is-missing { opacity: 0; }
   box-shadow: 0 10px 26px -20px rgba(155, 101, 112, .8);
 }
 .btn--ghost[aria-disabled="true"] { opacity: .5; pointer-events: none; }
+
+/* お知らせ CTA。販売前の唯一の行動なので、控えめなまま存在感は出す。
+   Amazon ボタン（濃いローズ）とは階層が分かれるよう淡い面で。 */
+.btn--notify {
+  background: linear-gradient(135deg, #F9E7EA 0%, #F2D3D8 60%, #EFC9CE 100%);
+  color: var(--c-rose-ink);
+  min-height: 58px; font-size: 15.5px;
+  box-shadow: 0 12px 28px -18px rgba(155, 101, 112, .75);
+}
 
 /* ---- 9. 通知セクション ---------------------------------------------- */
 .notify { padding-block: 8px 44px; }

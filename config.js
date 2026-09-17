@@ -60,9 +60,9 @@ window.CHENME_CONFIG = {
      ※「優先購入」「予約」「確保」を意味する文言は入れないでください。
      ------------------------------------------------------------------- */
   notify: {
-    mode: 'disabled',
-    url: '',                 // mode:'url' のとき使用（例: 'https://lin.ee/xxxxxxx'）
-    buttonLabel: '',         // 空ならモードに応じた既定ラベル
+    mode: 'url',
+    url: 'https://line.me/R/ti/p/@684tcjqk',   // ChenMe LINE公式アカウント
+    buttonLabel: 'LINEでお知らせを受け取る',
     endpoint: '',            // mode:'email' のとき使用（POST先 URL）
     note: '優先購入・商品の確保・予約ではありません。'
   },

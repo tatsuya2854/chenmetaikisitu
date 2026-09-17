@@ -253,7 +253,7 @@
 
     if (mode === 'url' && n.url) {
       var a = d.createElement('a');
-      a.className = 'btn btn--ghost';
+      a.className = 'btn btn--notify';
       a.href = n.url;
       a.target = '_blank';
       a.rel = 'noopener';
@@ -270,7 +270,7 @@
       form.innerHTML =
         '<input class="notify__input" type="email" name="email" inputmode="email" ' +
         'autocomplete="email" placeholder="メールアドレス" required>' +
-        '<button class="btn btn--ghost" type="submit">' +
+        '<button class="btn btn--notify" type="submit">' +
         (n.buttonLabel || 'お知らせを受け取る') + '</button>' +
         '<p class="notify__msg" role="status"></p>';
 
