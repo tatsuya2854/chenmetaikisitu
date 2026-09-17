@@ -1,0 +1,12 @@
+# 公開しないファイル（Cloudflare Workers の静的アセットから除外）
+# ページの表示に使わないものを外して、デプロイを軽くしています。
+
+node_modules
+tools
+assets/img/_source
+package.json
+package-lock.json
+wrangler.toml
+README.md
+assets/img/README.md
+.gitignore

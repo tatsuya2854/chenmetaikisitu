@@ -145,6 +145,29 @@ GA4 の「探索 > ファネルデータ探索」で上の3イベントを順に
 
 他ツールを足したいときは `chenme:track` カスタムイベントを拾えば、コード本体を触らずに接続できます。
 
+### GA4 の初期設定
+
+1. https://analytics.google.com → 管理（歯車）→ **プロパティを作成**
+   - 名前: `ChenMe` ／ タイムゾーン: **日本** ／ 通貨: **日本円**
+2. データストリーム → **ウェブ** → 公開URLを入力して作成
+3. 発行された **測定ID（`G-` で始まる）** を `config.js` の `ga4MeasurementId` に貼る
+
+### ★カスタム定義の登録（これをやらないと画面に出ません）
+
+GA4 はイベントの**パラメータを登録しないと、探索やレポートで選べません**。
+**管理 → カスタム定義** で下の5つを登録してください。
+
+| 登録名 | 種類 | パラメータ名 | これで見えるもの |
+|---|---|---|---|
+| trigger | ディメンション | `trigger` | 販売開始の瞬間にいた人か、後から来た人か |
+| placement | ディメンション | `placement` | 3か所のAmazonボタンのどれが押されたか |
+| method | ディメンション | `method` | お知らせCTAの経路 |
+| page_state | ディメンション | `page_state` | 押したときページがどの状態だったか |
+| waited_sec | **指標** | `waited_sec` | 何秒待った人がAmazonへ進んだか |
+
+`waited_sec` だけ「指標」、残りは「ディメンション」です。
+**登録前のデータには遡って適用されません。** 初回販売の前に必ず登録してください。
+
 ---
 
 ## 7. 開発・公開
@@ -155,43 +178,29 @@ npm install          # 画像変換ツール（sharp）を入れる。初回だ�
 npm run images       # assets/img/ の画像から .webp を生成
 ```
 
-### Cloudflare Pages へのデプロイ
+### 公開先
 
-ビルド不要です。`wrangler.toml` を置いてあるので設定は自動で読まれます。
+**Cloudflare Workers（静的アセット配信）** で公開しています。ビルドは不要です。
 
-**A. ダッシュボードから（おすすめ・初回はこちら）**
+- 公開URL: https://chenmetaikisitu.toropicanafanta.workers.dev/
+- 設定: `wrangler.toml`（公開するフォルダの指定だけ）
+- 公開しないファイル: `.assetsignore`（`node_modules` / `tools` / 原本画像など）
 
-1. https://dash.cloudflare.com → Workers & Pages → Create → Pages → Connect to Git
-2. リポジトリ `tatsuya2854/chenmetaikisitu` を選択
-3. 設定はそのままで OK（下の表の値が自動で入ります）
-4. Save and Deploy → 1〜2分で `https://<プロジェクト名>.pages.dev` が発行されます
+GitHub と連携済みなので、**このブランチに push すれば自動で再デプロイ**されます。
+手元から直接出したいときは `npx wrangler deploy` の1コマンドです。
 
-| 項目 | 値 |
-|---|---|
-| Production branch | `claude/chenme-waiting-page-vcfcpa`（このリポジトリの既定ブランチ） |
-| Framework preset | None |
-| ビルドコマンド | （空欄） |
-| 出力ディレクトリ | `/`（リポジトリのルート） |
+### 公開URLを変えたときにやること
 
-**B. 手元のPCから1コマンドで**
-
-```bash
-npx wrangler login      # 初回だけ、ブラウザで認証
-npx wrangler pages deploy
-```
-
-### ★デプロイ後に1回だけやること
-
-`index.html` の先頭にある「▼▼ デプロイ後に1回だけ書き換えてください ▼▼」の
-**2行だけ**、発行された実際のURLに書き換えてください。
+独自ドメインに移すなどして URL が変わったら、`index.html` の先頭にある
+「▼▼ 公開URLを変えたら、ここも書き換えてください ▼▼」の**2行だけ**を書き換えます。
 
 ```html
-<meta property="og:url"   content="https://chenme.pages.dev/">
-<meta property="og:image" content="https://chenme.pages.dev/assets/img/og.jpg">
+<meta property="og:url"   content="https://.../">
+<meta property="og:image" content="https://.../assets/img/og.jpg">
 ```
 
 OGP（LINE や X でシェアしたときのサムネイル）は絶対URLでないと画像が出ないため、
-ここだけは実際の公開URLが必要です。以降この2行を触ることはありません。
+ここだけは実際の公開URLが必要です。
 
 反映の確認は https://developers.facebook.com/tools/debug/ に URL を貼るのが早いです。
 

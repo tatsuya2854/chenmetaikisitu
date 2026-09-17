@@ -1,10 +1,17 @@
-# Cloudflare Pages の設定（ビルドは不要なので、公開するフォルダを指定するだけ）
+# Cloudflare Workers（静的アセット配信）の設定
 #
-# ダッシュボードで GitHub と連携する場合は、この設定が自動で読まれます。
+# このサイトはビルド不要の静的サイトなので、
+# 「どのフォルダを公開するか」を指定しているだけです。
+#
 # 手元から直接デプロイしたい場合は、プロジェクト直下でこの1行:
 #
-#     npx wrangler pages deploy
+#     npx wrangler deploy
 #
-name = "chenme"
-pages_build_output_dir = "."
+# 公開されないファイル（node_modules、原本画像など）は
+# .assetsignore で除外しています。
+
+name = "chenmetaikisitu"
 compatibility_date = "2026-09-17"
+
+[assets]
+directory = "."
