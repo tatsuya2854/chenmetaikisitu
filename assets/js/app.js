@@ -186,8 +186,13 @@
     return null;
   }
 
-  function wireAmazon() {
+  /* href の更新だけ。設定を読み直したあとにも呼べるよう、
+     クリックの登録（wireAmazon）とは分けてある。 */
+  var lastAmazonUrl = null;
+  function updateAmazonHrefs() {
     var url = (CFG.amazonUrl || '').trim();
+    if (url === lastAmazonUrl) return;
+    lastAmazonUrl = url;
 
     var problem = checkAmazonUrl(url);
     if (problem) console.warn('[ChenMe] Amazon URL の確認: ' + problem);
@@ -195,13 +200,89 @@
     Array.prototype.forEach.call(d.querySelectorAll('[data-amazon]'), function (a) {
       a.setAttribute('href', url || '#');
       a.setAttribute('rel', 'noopener');
-      if (!url) a.setAttribute('aria-disabled', 'true');
+      if (url) a.removeAttribute('aria-disabled');
+      else a.setAttribute('aria-disabled', 'true');
+    });
+  }
+
+  function wireAmazon() {
+    updateAmazonHrefs();
+
+    Array.prototype.forEach.call(d.querySelectorAll('[data-amazon]'), function (a) {
       a.addEventListener('click', function () {
         track('amazon_click', {
           placement: a.id || 'unknown',
           waited_sec: Math.round((Date.now() - openedAt) / 1000)
         });
       });
+    });
+  }
+
+  /* ---------------------------------------------------------------
+     3-b. 設定の自動再読み込み
+     ---------------------------------------------------------------
+     ページを開いたままの人にも、運営側の変更が届くようにする。
+
+     いちばん大事なのは SOLD OUT。売り切れて 'sold_out' に切り替えたとき、
+     すでにページを開いている人の画面にも自動で反映される（リロード不要）。
+     販売日時の変更や、Amazon URL の直しも同じように届く。
+
+     ・販売中は 30秒ごと、それ以外は 5分ごと
+     ・間隔は毎回 ±25% ずらす。販売開始の瞬間は全員が同時にページを
+       見ているので、そこで一斉に取りに行かないようにするため
+     ・タブが裏にあるあいだは確認しない（戻ってきたら即確認する）
+     ・プレビュー表示中は確認しない（状態を上書きしてしまうため）
+     ・反映されるのは 販売ステータス / 販売日時 / Amazon URL の3つ。
+       文言や通知設定の変更はリロードで反映されます。
+     --------------------------------------------------------------- */
+  var POLL_MS_ONSALE = 30000;
+  var POLL_MS_IDLE   = 300000;
+  var configLoading = false;
+  var nextPollAt = 0;
+
+  /* 次に確認する時刻を決める。間隔をばらけさせて同時アクセスを避ける */
+  function scheduleNextPoll(onsale) {
+    var base = onsale ? POLL_MS_ONSALE : POLL_MS_IDLE;
+    nextPollAt = Date.now() + base * (0.75 + Math.random() * 0.5);
+  }
+
+  function reloadConfigFile(done) {
+    var s = d.createElement('script');
+    s.src = 'config.js?t=' + Date.now();
+    s.onload  = function () { s.remove(); done(true); };
+    s.onerror = function () { s.remove(); done(false); };
+    d.head.appendChild(s);
+  }
+
+  function applyConfigUpdate() {
+    var next = w.CHENME_CONFIG;
+    /* 読み込みに失敗して古いオブジェクトのままなら何もしない */
+    if (!next || next === CFG) return;
+
+    CFG = next;
+    COPY = CFG.copy || {};
+
+    var nd = parseJst(CFG.nextSaleAt);
+    var changed = (nd ? nd.getTime() : 0) !== (saleDate ? saleDate.getTime() : 0);
+    if (changed) {
+      saleDate = nd;
+      el.saleAt.textContent = formatSaleAt(saleDate);
+      lastRender = {};                 /* カウントダウンを描き直させる */
+    }
+
+    updateAmazonHrefs();
+    tick();                            /* 新しい設定で状態を再判定 */
+  }
+
+  function maybeReloadConfig() {
+    if (PREVIEW || configLoading || d.hidden) return;
+    if (Date.now() < nextPollAt) return;
+
+    scheduleNextPoll(state === 'onsale');
+    configLoading = true;
+    reloadConfigFile(function (ok) {
+      configLoading = false;
+      if (ok) applyConfigUpdate();
     });
   }
 
@@ -301,6 +382,16 @@
       el.notifyLead.textContent  = COPY.notifyLead  || '販売が始まったら、すぐ見に行けるように。';
     }
 
+    /* 販売中は確認の間隔を短くする。
+       販売開始の瞬間に切り替わった人も、すでに販売中の状態で開いた人も
+       同じように拾う必要がある（後者が SOLD OUT を一番知りたい人なので）。
+       ここで即座に取りに行かないのは、販売開始の瞬間に全員が
+       一斉にアクセスするのを避けるため。 */
+    if (next === 'onsale') {
+      var soon = Date.now() + POLL_MS_ONSALE * (0.75 + Math.random() * 0.5);
+      if (nextPollAt > soon) nextPollAt = soon;
+    }
+
     /* --- 計測 --- */
     if (next === 'onsale' && !saleStartedFired) {
       saleStartedFired = true;
@@ -330,11 +421,16 @@
     }
   }
 
+  /* 表示の更新とは別サイクル。時刻を見るだけなので毎回呼んでも軽い */
+  function pollTick() { maybeReloadConfig(); }
+
   function startLoop() {
     tick();
     /* 250ms 間隔で判定 → 秒の切り替わりが遅れない。描画は値が変わった時だけ */
     setInterval(tick, 250);
-    d.addEventListener('visibilitychange', function () { if (!d.hidden) tick(); });
+    /* 設定の確認は別サイクル（実際の再取得は 30秒 / 5分 の間隔でだけ走る） */
+    setInterval(pollTick, 2000);
+    d.addEventListener('visibilitychange', function () { if (!d.hidden) { tick(); pollTick(); } });
     w.addEventListener('pageshow', tick);
     w.addEventListener('focus', tick);
   }
@@ -477,6 +573,8 @@
   buildRecords();
   guardImages();
   buildPreviewBar();
+
+  scheduleNextPoll(false);   /* 最初の設定確認をばらけた時刻に予約する */
 
   var initialState = resolveState(Date.now());
   root.setAttribute('data-state', initialState);          /* 計測の page_state を正しくするため先に反映 */
